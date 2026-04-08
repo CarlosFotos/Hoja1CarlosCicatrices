@@ -8,7 +8,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* ===== ESTILOS GENERALES (sin cambios) ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -102,7 +101,7 @@
         }
         .dot-label:hover {
             text-decoration: underline;
-            color: #e0c8ff;
+            color: #dac0f0;
         }
         .dot-control {
             display: flex;
@@ -219,6 +218,10 @@
             transform: translateY(2px);
             box-shadow: 0 2px 0 #110c16;
         }
+        .btn-small {
+            padding: 4px 12px;
+            font-size: 0.8rem;
+        }
         .flex-row {
             display: flex;
             align-items: center;
@@ -262,8 +265,14 @@
             text-align: right;
             opacity: 0.7;
         }
-
-        /* Ventanas flotantes / modales */
+        .delete-skill {
+            background: none;
+            border: none;
+            color: #cc6666;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -305,7 +314,6 @@
         .close:hover {
             color: #fff;
         }
-
         .encounter-list {
             list-style: none;
             padding: 0;
@@ -328,57 +336,26 @@
         .encounter-title:hover {
             background: #372c45;
         }
-        .encounter-summary {
-            padding: 0 16px 16px 16px;
-            color: #cfc1dd;
-            border-top: 1px dashed #5e4b6e;
-        }
-        .delete-encounter {
-            background: none;
-            border: none;
-            color: #cc6666;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        /* Botón pequeño para añadir habilidades */
-        .add-skill-btn {
-            margin-top: 8px;
-            padding: 4px 12px;
-            font-size: 0.8rem;
-            background: #3a2e4a;
-            border: 1px dashed #8f72aa;
-        }
-        .delete-skill-btn {
-            background: none;
-            border: none;
-            color: #cc6666;
-            font-size: 16px;
-            cursor: pointer;
-            margin-left: 8px;
-        }
     </style>
 </head>
 <body>
 <div class="sheet">
     <h1>📜 TUKI TUN <small>EL RASTREADOR</small></h1>
-    <!-- Cabecera editable -->
     <div class="flex-row" style="justify-content: space-between;">
         <div style="display: flex; gap: 20px;">
             <div><span style="color:#b8a4cc;">Edad:</span> <span contenteditable="true" id="ageDisplay">12 años</span></div>
             <div><span style="color:#b8a4cc;">Concepto:</span> <span contenteditable="true" id="conceptDisplay">Rastreador del Umbral</span></div>
         </div>
         <div><span style="color:#b8a4cc;">Experiencia Total:</span> <span contenteditable="true" id="xpDisplay" class="xp-badge">1 XP</span> 
-            <button class="btn" id="openXpLogBtn" style="padding:4px 12px; font-size:0.8rem;">📋 Historial XP</button>
+            <button class="btn btn-small" id="openXpLogBtn">📋 Historial XP</button>
         </div>
     </div>
     
-    <!-- I. Trasfondo (solo botón) -->
     <h2>I. Trasfondo · La Herencia de Lilium Tun</h2>
     <div class="stat-block" style="text-align: center;">
         <button class="btn" id="openBackgroundModalBtn" style="padding:12px 24px; font-size:1.1rem;">📖 Ver historia completa del personaje</button>
     </div>
 
-    <!-- II. Atributos -->
     <h2>II. Atributos (Inicio: 7/5/3)</h2>
     <div class="grid-3col">
         <div class="stat-block">
@@ -395,33 +372,30 @@
         </div>
     </div>
 
-    <!-- III. Habilidades -->
     <h2>III. Habilidades (13/9/5)</h2>
     <div class="grid-3col">
         <div class="stat-block">
-            <h3>✨ Talentos (13)</h3>
+            <h3>✨ Talentos</h3>
             <div id="skills-talentos"></div>
-            <button class="btn add-skill-btn" data-type="talentos">+ Añadir talento</button>
+            <button class="btn btn-small add-skill-btn" data-type="talentos" style="margin-top:12px;">+ Añadir talento</button>
         </div>
         <div class="stat-block">
-            <h3>🔧 Técnicas (9)</h3>
+            <h3>🔧 Técnicas</h3>
             <div id="skills-tecnicas"></div>
-            <button class="btn add-skill-btn" data-type="tecnicas">+ Añadir técnica</button>
+            <button class="btn btn-small add-skill-btn" data-type="tecnicas" style="margin-top:12px;">+ Añadir técnica</button>
         </div>
         <div class="stat-block">
-            <h3>📚 Conocimientos (5)</h3>
+            <h3>📚 Conocimientos</h3>
             <div id="skills-conocimientos"></div>
-            <button class="btn add-skill-btn" data-type="conocimientos">+ Añadir conocimiento</button>
+            <button class="btn btn-small add-skill-btn" data-type="conocimientos" style="margin-top:12px;">+ Añadir conocimiento</button>
         </div>
     </div>
 
-    <!-- IV. Trasfondos -->
     <h2>IV. Trasfondos (5 pts)</h2>
     <div class="stat-block">
         <div id="backgrounds-container"></div>
     </div>
 
-    <!-- V. Resonancias -->
     <h2>V. Resonancias</h2>
     <div class="stat-block">
         <div class="power-card">
@@ -438,7 +412,6 @@
         <div class="rule-note">Coste de experiencia para subir Resonancias: Número de Resonancias × 4.</div>
     </div>
 
-    <!-- VI. Virtudes y Estado de Salud -->
     <h2>VI. Virtudes · Voluntad · Energía · Inestabilidad</h2>
     <div class="grid-2col">
         <div class="stat-block">
@@ -467,31 +440,27 @@
         </div>
     </div>
 
-    <!-- VII. Inventario -->
     <h2>VII. Inventario</h2>
     <div class="stat-block">
         <ul class="inventory-list" id="inventoryList"></ul>
-        <button class="btn" id="addItemBtn" style="padding:4px 16px;">+ Añadir objeto</button>
+        <button class="btn btn-small" id="addItemBtn">+ Añadir objeto</button>
     </div>
 
-    <!-- Rasgo: Explorador -->
     <h2>🧭 Rasgo: Explorador</h2>
     <div class="stat-block">
         <p><strong>El explorador</strong> nunca es feliz a menos que experimente emociones nuevas de forma más o menos constante...</p>
-        <button class="btn" id="openTraitModalBtn" style="margin-top:8px; padding:6px 16px;">📜 Ver descripción completa</button>
+        <button class="btn btn-small" id="openTraitModalBtn">📜 Ver descripción completa</button>
     </div>
 
-    <!-- VIII. Diario de Encuentros -->
     <h2>📅 Diario de Encuentros</h2>
     <div class="stat-block">
         <ul class="encounter-list" id="encounterList"></ul>
-        <button class="btn" id="addEncounterBtn" style="padding:4px 16px;">+ Nuevo encuentro</button>
+        <button class="btn btn-small" id="addEncounterBtn">+ Nuevo encuentro</button>
     </div>
 
-    <!-- Reglas de experiencia -->
     <div style="margin-top: 20px; background: #1a1422; padding: 12px; border-radius: 16px; border: 1px solid #5a416b;">
         <details>
-            <summary style="cursor: pointer; color: #dac0f0; font-weight: bold;">📈 Costes de Experiencia (click para expandir)</summary>
+            <summary style="cursor: pointer; color: #dac0f0; font-weight: bold;">📈 Costes de Experiencia</summary>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
                 <div>Atributos: Nivel actual × 5</div>
                 <div>Habilidades: Nivel actual × 2 (nueva: 3)</div>
@@ -504,17 +473,13 @@
         </details>
     </div>
 
-    <!-- Botones de control -->
     <div class="button-bar">
-        <button class="btn" id="syncToCloudBtn">☁️ Sincronizar ahora (requiere contraseña)</button>
-        <button class="btn" id="resetBtn">🔄 Restaurar Tuki Tun</button>
+        <button class="btn" id="syncToCloudBtn">☁️ Sincronizar ahora</button>
     </div>
-    <footer>🩸 Cicatrices del Umbral · Hoja colaborativa (Firebase)</footer>
+    <footer>🩸 Cicatrices del Umbral · jugador CARLOS ANDRES MACHUCA NAVARRETE</footer>
 </div>
 
-<!-- ===== MODALES (sin cambios) ===== -->
-
-<!-- Modal: Historia completa (Trasfondo) -->
+<!-- Modales -->
 <div id="backgroundModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -525,7 +490,6 @@
     </div>
 </div>
 
-<!-- Modal: Descripción del Rasgo Explorador -->
 <div id="traitModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -539,7 +503,6 @@
     </div>
 </div>
 
-<!-- Modal: Historial de Experiencia (XP Log) -->
 <div id="xpLogModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -555,7 +518,6 @@
     </div>
 </div>
 
-<!-- Modal: Editar/Ver Encuentro -->
 <div id="encounterModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -572,7 +534,7 @@
     (function(){
         "use strict";
 
-        // ========== CONFIGURACIÓN DE FIREBASE ==========
+        // Configuración Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAgB2EzayEn3Ipf5SSUkUdjCdqFQ79ieCY",
             authDomain: "cicatrices-umbral-machu.firebaseapp.com",
@@ -586,7 +548,6 @@
         const db = firebase.firestore();
         const characterDocRef = db.collection("characters").doc("tuki_tun");
 
-        // ========== DATOS BASE ==========
         const FULL_BACKGROUND = `Tuki Tun creció bajo el cuidado de su madre, Lilium Tun, una talentosa cocinera de pueblo que hacía milagros con lo poco que tenían. Su infancia terminó abruptamente cuando Lilium contrajo una misteriosa enfermedad que la hacía toser sangre sin cesar, una dolencia que ningún médico pudo identificar y que acabó con su vida mientras Tuki la cuidaba en su precaria cama. Inmediatamente después de quedar solo tras el fallecimiento de su madre, Tuki se fue a vivir al orfanato. No conoció a su padre y su vida actual está marcada por la transición desde el hogar de su madre hacia la estructura del orfanato.`;
 
         const DEFAULT_DATA = {
@@ -666,16 +627,16 @@
         let characterData = JSON.parse(JSON.stringify(DEFAULT_DATA));
         let currentEncounterIndex = -1;
 
-        // ========== SINCRONIZACIÓN CON FIREBASE (MANUAL CON CONTRASEÑA) ==========
+        // ========== SINCRONIZACIÓN CON CONTRASEÑA ==========
         function syncToFirebase() {
-            const password = prompt('🔐 Ingresa la contraseña para sincronizar con la nube:');
+            const password = prompt('🔐 Ingresa la contraseña para sincronizar:');
             if (password !== '92647213') {
                 alert('❌ Contraseña incorrecta. No se sincronizó.');
                 return;
             }
             collectFromEditable();
             characterDocRef.set(characterData)
-                .then(() => alert('✅ Datos sincronizados correctamente'))
+                .then(() => alert('✅ Datos sincronizados con la nube'))
                 .catch(err => alert('❌ Error al sincronizar: ' + err));
         }
 
@@ -693,7 +654,7 @@
             });
         }
 
-        // ========== RENDERIZADO DE HABILIDADES (CON EDICIÓN Y AÑADIR) ==========
+        // ========== RENDERIZADO DE HABILIDADES EDITABLES ==========
         function renderSkills(containerId, skillsArray, type) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -702,87 +663,64 @@
                 const row = document.createElement('div');
                 row.className = 'dot-row';
                 
-                // Label editable
                 const labelSpan = document.createElement('span');
                 labelSpan.className = 'dot-label';
                 labelSpan.textContent = skill.name + ':';
                 labelSpan.addEventListener('dblclick', () => {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.value = skill.name;
-                    input.style.width = '120px';
-                    input.addEventListener('blur', () => {
-                        skill.name = input.value || 'Habilidad';
+                    const newName = prompt('Nuevo nombre de la habilidad:', skill.name);
+                    if (newName && newName.trim()) {
+                        skill.name = newName.trim();
                         renderAll();
-                    });
-                    input.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') input.blur();
-                    });
-                    labelSpan.innerHTML = '';
-                    labelSpan.appendChild(input);
-                    input.focus();
+                        syncToFirebase();
+                    }
                 });
                 
                 const dotDiv = document.createElement('div');
                 dotDiv.className = 'dot-control';
-                
-                const currentValue = skill.value;
-                
                 for (let i = 1; i <= 5; i++) {
                     const dot = document.createElement('span');
-                    dot.className = 'dot' + (i <= currentValue ? ' filled' : '');
+                    dot.className = 'dot' + (i <= skill.value ? ' filled' : '');
                     dot.textContent = '●';
                     dot.dataset.index = idx;
                     dot.dataset.level = i;
                     dot.addEventListener('click', (e) => {
-                        const newVal = parseInt(e.target.dataset.level);
-                        skill.value = newVal;
+                        skill.value = parseInt(e.target.dataset.level);
                         renderAll();
+                        syncToFirebase();
                     });
                     dotDiv.appendChild(dot);
                 }
                 
                 const valueDisplay = document.createElement('span');
                 valueDisplay.className = 'inline-value';
-                valueDisplay.textContent = `${currentValue} ●`;
+                valueDisplay.textContent = `${skill.value} ●`;
                 
-                // Botón eliminar
-                const delBtn = document.createElement('button');
-                delBtn.className = 'delete-skill-btn';
-                delBtn.innerHTML = '🗑️';
-                delBtn.addEventListener('click', () => {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-skill';
+                deleteBtn.innerHTML = '🗑️';
+                deleteBtn.addEventListener('click', () => {
                     skillsArray.splice(idx, 1);
                     renderAll();
+                    syncToFirebase();
                 });
                 
                 row.appendChild(labelSpan);
                 row.appendChild(dotDiv);
                 row.appendChild(valueDisplay);
-                row.appendChild(delBtn);
+                row.appendChild(deleteBtn);
                 container.appendChild(row);
             });
         }
 
-        // Modificar renderAll para usar la nueva función de habilidades
-        const originalRenderAll = function() {
-            renderDots('attr-fisicos', characterData.attributes.fisicos);
-            renderDots('attr-sociales', characterData.attributes.sociales);
-            renderDots('attr-mentales', characterData.attributes.mentales);
-            
-            renderSkills('skills-talentos', characterData.skills.talentos, 'talentos');
-            renderSkills('skills-tecnicas', characterData.skills.tecnicas, 'tecnicas');
-            renderSkills('skills-conocimientos', characterData.skills.conocimientos, 'conocimientos');
-            
-            renderBackgrounds();
-            renderVirtudes();
-            renderInstability();
-            renderHealth();
-            renderInventory();
-            renderEncounters();
-            syncEditableFields();
-        };
+        function addSkill(type) {
+            const newName = prompt('Nombre de la nueva habilidad:');
+            if (!newName) return;
+            characterData.skills[type].push({ name: newName, value: 1 });
+            renderAll();
+            syncToFirebase();
+        }
 
-        // Mantener compatibilidad con renderDots para atributos
+        // Resto de funciones de renderizado (atributos, virtudes, salud, etc.) se mantienen igual que antes
         function renderDots(containerId, items) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -795,9 +733,7 @@
                 labelSpan.textContent = item.name + ':';
                 const dotDiv = document.createElement('div');
                 dotDiv.className = 'dot-control';
-                
                 const currentValue = item.value !== undefined ? item.value : (item.base + item.extra);
-                
                 for (let i = 1; i <= 5; i++) {
                     const dot = document.createElement('span');
                     dot.className = 'dot' + (i <= currentValue ? ' filled' : '');
@@ -812,6 +748,7 @@
                             item.extra = newVal - item.base;
                         }
                         renderAll();
+                        syncToFirebase();
                     });
                     dotDiv.appendChild(dot);
                 }
@@ -845,6 +782,7 @@
                     dot.addEventListener('click', (e) => {
                         characterData.backgrounds[idx].value = parseInt(e.target.dataset.level);
                         renderAll();
+                        syncToFirebase();
                     });
                     dotDiv.appendChild(dot);
                 }
@@ -855,7 +793,6 @@
                 row.appendChild(dotDiv);
                 row.appendChild(valueDisplay);
                 container.appendChild(row);
-                
                 if (bg.desc) {
                     const descDiv = document.createElement('div');
                     descDiv.className = 'bg-description';
@@ -884,6 +821,7 @@
                         characterData.virtues[idx].value = parseInt(e.target.dataset.level);
                         updateInstabilityMax();
                         renderAll();
+                        syncToFirebase();
                     });
                     dotDiv.appendChild(dot);
                 }
@@ -901,12 +839,8 @@
             const autocontrol = characterData.virtues.find(v => v.name === 'Autocontrol')?.value || 0;
             const max = conciencia + autocontrol;
             document.getElementById('instabilityMax').textContent = `máx: ${max}`;
-            while (characterData.instability.length < max) {
-                characterData.instability.push(false);
-            }
-            while (characterData.instability.length > max) {
-                characterData.instability.pop();
-            }
+            while (characterData.instability.length < max) characterData.instability.push(false);
+            while (characterData.instability.length > max) characterData.instability.pop();
         }
 
         function renderInstability() {
@@ -920,6 +854,7 @@
                 box.addEventListener('click', () => {
                     characterData.instability[i] = !characterData.instability[i];
                     renderInstability();
+                    syncToFirebase();
                 });
                 cont.appendChild(box);
             });
@@ -936,7 +871,6 @@
                 label.textContent = `${level.name} (${level.penalty !== null ? level.penalty : '—'})`;
                 const boxesDiv = document.createElement('div');
                 boxesDiv.className = 'boxes';
-                
                 if (level.name === 'ESPECIAL') {
                     const input = document.createElement('input');
                     input.type = 'text';
@@ -944,6 +878,7 @@
                     input.value = level.description || '';
                     input.addEventListener('input', (e) => {
                         characterData.health[idx].description = e.target.value;
+                        syncToFirebase();
                     });
                     wrapper.appendChild(label);
                     wrapper.appendChild(input);
@@ -955,6 +890,7 @@
                         box.addEventListener('click', () => {
                             characterData.health[idx].marked = !characterData.health[idx].marked;
                             renderHealth();
+                            syncToFirebase();
                         });
                         boxesDiv.appendChild(box);
                     }
@@ -973,9 +909,8 @@
                 const inp = document.createElement('input');
                 inp.type = 'text';
                 inp.value = item;
-                inp.addEventListener('input', (e) => {
-                    characterData.inventory[i] = e.target.value;
-                });
+                inp.addEventListener('input', (e) => { characterData.inventory[i] = e.target.value; });
+                inp.addEventListener('blur', () => syncToFirebase());
                 const delBtn = document.createElement('button');
                 delBtn.textContent = '✕';
                 delBtn.style.background = '#3d2a4a';
@@ -987,6 +922,7 @@
                 delBtn.addEventListener('click', () => {
                     characterData.inventory.splice(i,1);
                     renderInventory();
+                    syncToFirebase();
                 });
                 li.appendChild(inp);
                 li.appendChild(delBtn);
@@ -1005,12 +941,13 @@
                 titleDiv.className = 'encounter-title';
                 titleDiv.innerHTML = `<span>📌 ${enc.title}</span>`;
                 const delBtn = document.createElement('button');
-                delBtn.className = 'delete-encounter';
+                delBtn.className = 'delete-skill';
                 delBtn.innerHTML = '🗑️';
                 delBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     characterData.encounters.splice(i,1);
                     renderEncounters();
+                    syncToFirebase();
                 });
                 titleDiv.appendChild(delBtn);
                 titleDiv.addEventListener('click', () => {
@@ -1062,7 +999,19 @@
         }
 
         function renderAll() {
-            originalRenderAll();
+            renderDots('attr-fisicos', characterData.attributes.fisicos);
+            renderDots('attr-sociales', characterData.attributes.sociales);
+            renderDots('attr-mentales', characterData.attributes.mentales);
+            renderSkills('skills-talentos', characterData.skills.talentos, 'talentos');
+            renderSkills('skills-tecnicas', characterData.skills.tecnicas, 'tecnicas');
+            renderSkills('skills-conocimientos', characterData.skills.conocimientos, 'conocimientos');
+            renderBackgrounds();
+            renderVirtudes();
+            renderInstability();
+            renderHealth();
+            renderInventory();
+            renderEncounters();
+            syncEditableFields();
         }
 
         function addXpEntry(reason, amount = 1) {
@@ -1070,6 +1019,7 @@
             characterData.xpLog.push({ reason, amount, date: new Date().toISOString() });
             characterData.xp = (characterData.xp || 0) + amount;
             renderAll();
+            syncToFirebase();
         }
 
         // ========== INICIALIZACIÓN ==========
@@ -1078,15 +1028,10 @@
             setTimeout(() => { if (!characterData._cloudSynced) renderAll(); }, 2000);
 
             document.getElementById('syncToCloudBtn').addEventListener('click', syncToFirebase);
-            document.getElementById('resetBtn').addEventListener('click', () => {
-                if (confirm('¿Restaurar valores por defecto? Se perderán los cambios no guardados.')) {
-                    characterData = JSON.parse(JSON.stringify(DEFAULT_DATA));
-                    renderAll();
-                }
-            });
             document.getElementById('addItemBtn').addEventListener('click', () => {
                 characterData.inventory.push('Nuevo objeto');
                 renderInventory();
+                syncToFirebase();
             });
             document.getElementById('addEncounterBtn').addEventListener('click', () => {
                 currentEncounterIndex = -1;
@@ -1096,14 +1041,8 @@
                 document.getElementById('encounterModal').style.display = 'block';
             });
 
-            // Botones añadir habilidad
             document.querySelectorAll('.add-skill-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const type = e.target.dataset.type;
-                    const newSkill = { name: 'Nueva', value: 0 };
-                    characterData.skills[type].push(newSkill);
-                    renderAll();
-                });
+                btn.addEventListener('click', () => addSkill(btn.dataset.type));
             });
 
             document.getElementById('openBackgroundModalBtn').addEventListener('click', () => {
@@ -1140,13 +1079,13 @@
                 const title = document.getElementById('encounterTitleInput').value;
                 const summary = document.getElementById('encounterSummaryInput').value;
                 if (!title) return alert('El título es obligatorio');
-                
                 if (currentEncounterIndex >= 0) {
                     characterData.encounters[currentEncounterIndex] = { title, summary };
                 } else {
                     characterData.encounters.push({ title, summary });
                 }
                 renderEncounters();
+                syncToFirebase();
                 document.getElementById('encounterModal').style.display = 'none';
             });
 
@@ -1154,7 +1093,11 @@
                 if (e.target.classList.contains('modal')) e.target.style.display = 'none';
             });
 
-            // No sincronización automática
+            const editableFields = ['ageDisplay', 'conceptDisplay', 'xpDisplay', 'willpowerCurrent', 'willpowerMax', 'energyCurrent', 'energyMax'];
+            editableFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('blur', () => { collectFromEditable(); syncToFirebase(); });
+            });
         });
     })();
 </script>
