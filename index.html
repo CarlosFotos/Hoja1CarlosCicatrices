@@ -270,10 +270,24 @@
             margin-left: 6px;
             padding: 0 4px;
         }
+
+        /* Modales flotantes */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            overflow: auto;
+        }
         .modal-content {
             background: #1f1929;
-            margin: 10% auto;
-            padding: 18px;
+            margin: 8% auto;
+            padding: 20px;
             border: 2px solid #8f72aa;
             border-radius: 20px;
             width: 90%;
@@ -282,6 +296,28 @@
             overflow-y: auto;
             color: #e4d9cd;
             box-shadow: 0 20px 40px #000;
+            position: relative;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #6a4e7a;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        .close {
+            color: #cbb2de;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #fff;
+        }
+        .encounter-list {
+            list-style: none;
+            padding: 0;
         }
         .encounter-item {
             background: #261f30;
@@ -292,54 +328,31 @@
         .encounter-title {
             padding: 10px 12px;
             font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #dac0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .encounter-title:hover {
+            background: #372c45;
         }
 
-        /* ========== RESPONSIVE PARA MÓVILES ========== */
         @media (max-width: 700px) {
             body { padding: 8px 5px; }
             .sheet { padding: 12px 8px; }
             h1 { font-size: 1.5rem; }
             h2 { font-size: 1.2rem; }
-            .grid-3col {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            .grid-2col {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            .dot-label {
-                min-width: 90px;
-                font-size: 0.85rem;
-            }
-            .dot {
-                font-size: 18px;
-            }
-            .box {
-                width: 22px;
-                height: 22px;
-            }
-            .btn {
-                padding: 6px 12px;
-                font-size: 0.75rem;
-            }
-            .flex-row {
-                gap: 8px;
-            }
-            .xp-badge {
-                font-size: 1rem;
-            }
-            .stat-block {
-                padding: 10px;
-            }
-            .power-card {
-                font-size: 0.85rem;
-            }
-        }
-
-        /* Permitir zoom sin romper layout */
-        @media (max-width: 400px) {
-            .dot-label { min-width: 80px; }
+            .grid-3col { grid-template-columns: 1fr; gap: 8px; }
+            .grid-2col { grid-template-columns: 1fr; gap: 8px; }
+            .dot-label { min-width: 90px; font-size: 0.85rem; }
+            .dot { font-size: 18px; }
+            .box { width: 22px; height: 22px; }
+            .btn { padding: 6px 12px; font-size: 0.75rem; }
+            .xp-badge { font-size: 1rem; }
+            .stat-block { padding: 10px; }
+            .power-card { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -363,114 +376,60 @@
 
     <h2>II. Atributos (Inicio: 7/5/3)</h2>
     <div class="grid-3col">
-        <div class="stat-block">
-            <h3>🏋️ Físicos (3 pts)</h3>
-            <div id="attr-fisicos"></div>
-        </div>
-        <div class="stat-block">
-            <h3>🎭 Sociales (7 pts)</h3>
-            <div id="attr-sociales"></div>
-        </div>
-        <div class="stat-block">
-            <h3>🧠 Mentales (5 pts)</h3>
-            <div id="attr-mentales"></div>
-        </div>
+        <div class="stat-block"><h3>🏋️ Físicos (3 pts)</h3><div id="attr-fisicos"></div></div>
+        <div class="stat-block"><h3>🎭 Sociales (7 pts)</h3><div id="attr-sociales"></div></div>
+        <div class="stat-block"><h3>🧠 Mentales (5 pts)</h3><div id="attr-mentales"></div></div>
     </div>
 
     <h2>III. Habilidades (13/9/5)</h2>
     <div class="grid-3col">
-        <div class="stat-block">
-            <h3>✨ Talentos</h3>
-            <div id="skills-talentos"></div>
-            <button class="btn btn-small add-skill-btn" data-type="talentos" style="margin-top:10px;">+ Añadir talento</button>
-        </div>
-        <div class="stat-block">
-            <h3>🔧 Técnicas</h3>
-            <div id="skills-tecnicas"></div>
-            <button class="btn btn-small add-skill-btn" data-type="tecnicas" style="margin-top:10px;">+ Añadir técnica</button>
-        </div>
-        <div class="stat-block">
-            <h3>📚 Conocimientos</h3>
-            <div id="skills-conocimientos"></div>
-            <button class="btn btn-small add-skill-btn" data-type="conocimientos" style="margin-top:10px;">+ Añadir conocimiento</button>
-        </div>
+        <div class="stat-block"><h3>✨ Talentos</h3><div id="skills-talentos"></div><button class="btn btn-small add-skill-btn" data-type="talentos" style="margin-top:10px;">+ Añadir talento</button></div>
+        <div class="stat-block"><h3>🔧 Técnicas</h3><div id="skills-tecnicas"></div><button class="btn btn-small add-skill-btn" data-type="tecnicas" style="margin-top:10px;">+ Añadir técnica</button></div>
+        <div class="stat-block"><h3>📚 Conocimientos</h3><div id="skills-conocimientos"></div><button class="btn btn-small add-skill-btn" data-type="conocimientos" style="margin-top:10px;">+ Añadir conocimiento</button></div>
     </div>
 
     <h2>IV. Trasfondos (5 pts)</h2>
-    <div class="stat-block">
-        <div id="backgrounds-container"></div>
-    </div>
+    <div class="stat-block"><div id="backgrounds-container"></div></div>
 
     <h2>V. Resonancias</h2>
     <div class="stat-block">
-        <div class="power-card">
-            <strong>🌀 Cicatriz Caótica (Violeta)</strong><br>
-            <span class="badge">Pasivo</span> Suerte Anómala (Repite 3 tiradas fallidas al día).<br>
-            <span class="badge">Activo</span> Ruptura Local. Coste: 1 PE + 1 FV. <strong>Tirada: Percepción</strong>.
-        </div>
-        <div class="power-card">
-            <strong>👁️ Detectar Fractura (Violeta)</strong> — Ve fracturas ocultas. Coste: 1 PE. Rango: 10m.
-        </div>
-        <div class="power-card">
-            <strong>💧 Columna de Agua (Azul)</strong> — 3d10 daño. Coste: 3 PE. <strong>Tirada: Astucia</strong>.
-        </div>
+        <div class="power-card"><strong>🌀 Cicatriz Caótica (Violeta)</strong><br><span class="badge">Pasivo</span> Suerte Anómala (Repite 3 tiradas fallidas al día).<br><span class="badge">Activo</span> Ruptura Local. Coste: 1 PE + 1 FV. <strong>Tirada: Percepción</strong>.</div>
+        <div class="power-card"><strong>👁️ Detectar Fractura (Violeta)</strong> — Ve fracturas ocultas. Coste: 1 PE. Rango: 10m.</div>
+        <div class="power-card"><strong>💧 Columna de Agua (Azul)</strong> — 3d10 daño. Coste: 3 PE. <strong>Tirada: Astucia</strong>.</div>
         <div class="rule-note">Coste XP: Número de Resonancias × 4.</div>
     </div>
 
     <h2>VI. Virtudes · Voluntad · Energía · Inestabilidad</h2>
     <div class="grid-2col">
         <div class="stat-block">
-            <h3>⚖️ Virtudes (7 pts)</h3>
-            <div id="virtues-container"></div>
+            <h3>⚖️ Virtudes (7 pts)</h3><div id="virtues-container"></div>
             <div style="margin-top: 15px;">
                 <div><strong>FV:</strong> <input type="number" id="willpowerCurrent" min="0" max="10" style="width:60px;"> / <input type="number" id="willpowerMax" min="0" max="10" style="width:60px;"> <span class="rule-note">Coste XP:5</span></div>
                 <div><strong>PE:</strong> <input type="number" id="energyCurrent" min="0" max="20" style="width:60px;"> / <input type="number" id="energyMax" min="0" max="20" style="width:60px;"> <span class="rule-note">Coste XP:4</span></div>
                 <div><strong>Inestabilidad:</strong> <span id="instabilityBoxes" class="boxes"></span> <span id="instabilityMax">máx:6</span></div>
             </div>
         </div>
-        <div class="stat-block">
-            <h3>❤️ Salud</h3>
-            <div id="healthTrack" class="health-track"></div>
-        </div>
+        <div class="stat-block"><h3>❤️ Salud</h3><div id="healthTrack" class="health-track"></div></div>
     </div>
 
     <h2>VII. Inventario</h2>
-    <div class="stat-block">
-        <ul class="inventory-list" id="inventoryList"></ul>
-        <button class="btn btn-small" id="addItemBtn">+ Añadir objeto</button>
-    </div>
+    <div class="stat-block"><ul class="inventory-list" id="inventoryList"></ul><button class="btn btn-small" id="addItemBtn">+ Añadir objeto</button></div>
 
     <h2>🧭 Rasgo: Explorador</h2>
-    <div class="stat-block">
-        <p style="font-size:0.9rem;"><strong>El explorador</strong> nunca es feliz a menos que experimente emociones nuevas...</p>
-        <button class="btn btn-small" id="openTraitModalBtn">📜 Ver descripción completa</button>
-    </div>
+    <div class="stat-block"><p style="font-size:0.9rem;"><strong>El explorador</strong> nunca es feliz a menos que experimente emociones nuevas...</p><button class="btn btn-small" id="openTraitModalBtn">📜 Ver descripción completa</button></div>
 
     <h2>📅 Diario de Encuentros</h2>
-    <div class="stat-block">
-        <ul class="encounter-list" id="encounterList"></ul>
-        <button class="btn btn-small" id="addEncounterBtn">+ Nuevo encuentro</button>
-    </div>
+    <div class="stat-block"><ul class="encounter-list" id="encounterList"></ul><button class="btn btn-small" id="addEncounterBtn">+ Nuevo encuentro</button></div>
 
     <div style="margin-top: 16px; background: #1a1422; padding: 8px; border-radius: 14px; border: 1px solid #5a416b;">
-        <details>
-            <summary style="cursor: pointer; color: #dac0f0; font-weight: bold;">📈 Costes de Experiencia</summary>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; font-size:0.8rem;">
-                <div>Atributos: Nivel ×5</div><div>Habilidades: Nivel ×2 (nueva:3)</div>
-                <div>Virtudes: Nivel ×3</div><div>PE: 4 por punto</div>
-                <div>Resonancias: Nº ×4</div><div>FV: 5</div>
-                <div>Trasfondos: No</div>
-            </div>
-        </details>
+        <details><summary style="cursor: pointer; color: #dac0f0; font-weight: bold;">📈 Costes de Experiencia</summary><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; font-size:0.8rem;"><div>Atributos: Nivel ×5</div><div>Habilidades: Nivel ×2 (nueva:3)</div><div>Virtudes: Nivel ×3</div><div>PE: 4 por punto</div><div>Resonancias: Nº ×4</div><div>FV: 5</div><div>Trasfondos: No</div></div></details>
     </div>
 
-    <div class="button-bar">
-        <button class="btn" id="syncToCloudBtn">☁️ Sincronizar ahora</button>
-    </div>
+    <div class="button-bar"><button class="btn" id="syncToCloudBtn">☁️ Sincronizar ahora</button></div>
     <footer>🩸 Cicatrices del Umbral · jugador CARLOS ANDRES MACHUCA NAVARRETE</footer>
 </div>
 
-<!-- Modales (sin cambios significativos, solo ajustes menores) -->
+<!-- Modales -->
 <div id="backgroundModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>La Herencia de Lilium Tun</h2><span class="close" id="closeBackgroundModal">&times;</span></div><div id="fullBackgroundText" style="white-space: pre-wrap;"></div></div></div>
 <div id="traitModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Rasgo: El Explorador</h2><span class="close" id="closeTraitModal">&times;</span></div><p><strong>Objetivo:</strong> experimentar la mayor cantidad de vida posible.</p><p><strong>Miedo:</strong> quedar atrapado.</p><p><strong>Debilidad:</strong> deambular sin rumbo.</p><p><strong>Talento:</strong> ser fiel a sus deseos y asombro.</p></div></div>
 <div id="xpLogModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>📋 Historial XP</h2><span class="close" id="closeXpLogModal">&times;</span></div><ul id="xpLogList" style="list-style:none;padding:0;"></ul><div style="display:flex;gap:8px;margin-top:16px;"><input type="number" id="xpAmountInput" min="1" value="1" style="width:70px;"><button class="btn" id="addXpEntryBtn">+ Añadir</button></div><p class="rule-note">Ingresa la cantidad de XP. Se pedirá el motivo.</p></div></div>
@@ -526,21 +485,31 @@
 
         let characterData = JSON.parse(JSON.stringify(DEFAULT_DATA));
         let currentEncounterIndex = -1;
+        let localChanges = false; // No necesario, pero podemos usarlo
 
+        // ========== SINCRONIZACIÓN MANUAL CON CONTRASEÑA ==========
         function syncToFirebase() {
             const password = prompt('🔐 Ingresa la contraseña para sincronizar:');
             if (password !== '92647213') { alert('❌ Contraseña incorrecta.'); return; }
             collectFromEditable();
-            characterDocRef.set(characterData).then(() => alert('✅ Sincronizado')).catch(err => alert('❌ Error: '+err));
+            characterDocRef.set(characterData).then(() => alert('✅ Datos sincronizados')).catch(err => alert('❌ Error: '+err));
         }
 
+        // Escuchar cambios remotos (actualiza la UI automáticamente)
         function listenToFirebase() {
             characterDocRef.onSnapshot((doc) => {
-                if (doc.exists) { characterData = { ...DEFAULT_DATA, ...doc.data() }; renderAll(); }
-                else { characterDocRef.set(DEFAULT_DATA); }
+                if (doc.exists) {
+                    const cloudData = doc.data();
+                    // Fusionar sin perder estructura
+                    characterData = { ...DEFAULT_DATA, ...cloudData };
+                    renderAll();
+                } else {
+                    characterDocRef.set(DEFAULT_DATA);
+                }
             }, (error) => console.warn('Offline', error));
         }
 
+        // ========== RENDERIZADO (SOLO ACTUALIZA ESTADO LOCAL, NO SINCRONIZA) ==========
         function renderSkills(containerId, skillsArray) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -550,19 +519,19 @@
                 const labelSpan = document.createElement('span'); labelSpan.className = 'dot-label'; labelSpan.textContent = skill.name + ':';
                 labelSpan.addEventListener('dblclick', () => {
                     const newName = prompt('Nuevo nombre:', skill.name);
-                    if (newName && newName.trim()) { skill.name = newName.trim(); renderAll(); syncToFirebase(); }
+                    if (newName && newName.trim()) { skill.name = newName.trim(); renderAll(); }
                 });
                 const dotDiv = document.createElement('div'); dotDiv.className = 'dot-control';
                 for (let i=1; i<=5; i++) {
                     const dot = document.createElement('span');
                     dot.className = 'dot' + (i <= skill.value ? ' filled' : ''); dot.textContent = '●';
                     dot.dataset.level = i;
-                    dot.addEventListener('click', (e) => { skill.value = parseInt(e.target.dataset.level); renderAll(); syncToFirebase(); });
+                    dot.addEventListener('click', (e) => { skill.value = parseInt(e.target.dataset.level); renderAll(); });
                     dotDiv.appendChild(dot);
                 }
                 const valSpan = document.createElement('span'); valSpan.className = 'inline-value'; valSpan.textContent = `${skill.value} ●`;
                 const delBtn = document.createElement('button'); delBtn.className = 'delete-skill'; delBtn.innerHTML = '🗑️';
-                delBtn.addEventListener('click', () => { skillsArray.splice(idx,1); renderAll(); syncToFirebase(); });
+                delBtn.addEventListener('click', () => { skillsArray.splice(idx,1); renderAll(); });
                 row.appendChild(labelSpan); row.appendChild(dotDiv); row.appendChild(valSpan); row.appendChild(delBtn);
                 container.appendChild(row);
             });
@@ -572,7 +541,7 @@
             const newName = prompt('Nombre de la habilidad:');
             if (!newName) return;
             characterData.skills[type].push({ name: newName, value: 1 });
-            renderAll(); syncToFirebase();
+            renderAll();
         }
 
         function renderDots(containerId, items) {
@@ -588,7 +557,7 @@
                     dot.addEventListener('click', (e) => {
                         const newVal = parseInt(e.target.dataset.level);
                         if (item.value !== undefined) item.value = newVal; else item.extra = newVal - item.base;
-                        renderAll(); syncToFirebase();
+                        renderAll();
                     });
                     dotDiv.appendChild(dot);
                 }
@@ -606,7 +575,7 @@
                 for (let i=1; i<=5; i++) {
                     const dot = document.createElement('span'); dot.className = 'dot' + (i <= bg.value ? ' filled' : ''); dot.textContent = '●';
                     dot.dataset.level = i;
-                    dot.addEventListener('click', (e) => { characterData.backgrounds[idx].value = parseInt(e.target.dataset.level); renderAll(); syncToFirebase(); });
+                    dot.addEventListener('click', (e) => { characterData.backgrounds[idx].value = parseInt(e.target.dataset.level); renderAll(); });
                     dotDiv.appendChild(dot);
                 }
                 const valSpan = document.createElement('span'); valSpan.className = 'inline-value'; valSpan.textContent = `${bg.value} ●`;
@@ -624,7 +593,7 @@
                 for (let i=1; i<=5; i++) {
                     const dot = document.createElement('span'); dot.className = 'dot' + (i <= v.value ? ' filled' : ''); dot.textContent = '●';
                     dot.dataset.level = i;
-                    dot.addEventListener('click', (e) => { characterData.virtues[idx].value = parseInt(e.target.dataset.level); updateInstabilityMax(); renderAll(); syncToFirebase(); });
+                    dot.addEventListener('click', (e) => { characterData.virtues[idx].value = parseInt(e.target.dataset.level); updateInstabilityMax(); renderAll(); });
                     dotDiv.appendChild(dot);
                 }
                 row.appendChild(dotDiv);
@@ -647,7 +616,7 @@
             const cont = document.getElementById('instabilityBoxes'); cont.innerHTML = '';
             characterData.instability.forEach((mark, i) => {
                 const box = document.createElement('div'); box.className = 'box' + (mark ? ' marked' : ''); box.textContent = mark ? 'X' : '';
-                box.addEventListener('click', () => { characterData.instability[i] = !characterData.instability[i]; renderInstability(); syncToFirebase(); });
+                box.addEventListener('click', () => { characterData.instability[i] = !characterData.instability[i]; renderInstability(); });
                 cont.appendChild(box);
             });
         }
@@ -659,13 +628,13 @@
                 const label = document.createElement('span'); label.style.minWidth = '90px'; label.textContent = `${level.name} (${level.penalty !== null ? level.penalty : '—'})`;
                 if (level.name === 'ESPECIAL') {
                     const input = document.createElement('input'); input.type = 'text'; input.placeholder = 'Descripción'; input.value = level.description || '';
-                    input.addEventListener('input', (e) => { characterData.health[idx].description = e.target.value; syncToFirebase(); });
+                    input.addEventListener('input', (e) => { characterData.health[idx].description = e.target.value; });
                     wrapper.appendChild(label); wrapper.appendChild(input);
                 } else {
                     const boxesDiv = document.createElement('div'); boxesDiv.className = 'boxes';
                     for (let b=0; b<level.boxes; b++) {
                         const box = document.createElement('div'); box.className = 'box' + (level.marked ? ' marked' : ''); box.textContent = level.marked ? 'X' : '';
-                        box.addEventListener('click', () => { characterData.health[idx].marked = !characterData.health[idx].marked; renderHealth(); syncToFirebase(); });
+                        box.addEventListener('click', () => { characterData.health[idx].marked = !characterData.health[idx].marked; renderHealth(); });
                         boxesDiv.appendChild(box);
                     }
                     wrapper.appendChild(label); wrapper.appendChild(boxesDiv);
@@ -680,9 +649,8 @@
                 const li = document.createElement('li');
                 const inp = document.createElement('input'); inp.type = 'text'; inp.value = item;
                 inp.addEventListener('input', (e) => { characterData.inventory[i] = e.target.value; });
-                inp.addEventListener('blur', () => syncToFirebase());
                 const delBtn = document.createElement('button'); delBtn.textContent = '✕'; delBtn.style.background = '#3d2a4a'; delBtn.style.border = 'none'; delBtn.style.color = 'white'; delBtn.style.borderRadius = '20px'; delBtn.style.cursor = 'pointer'; delBtn.style.marginLeft = '6px';
-                delBtn.addEventListener('click', () => { characterData.inventory.splice(i,1); renderInventory(); syncToFirebase(); });
+                delBtn.addEventListener('click', () => { characterData.inventory.splice(i,1); renderInventory(); });
                 li.appendChild(inp); li.appendChild(delBtn); list.appendChild(li);
             });
         }
@@ -695,7 +663,7 @@
                 const titleDiv = document.createElement('div'); titleDiv.className = 'encounter-title';
                 titleDiv.innerHTML = `<span>📌 ${enc.title}</span>`;
                 const delBtn = document.createElement('button'); delBtn.className = 'delete-skill'; delBtn.innerHTML = '🗑️';
-                delBtn.addEventListener('click', (e) => { e.stopPropagation(); characterData.encounters.splice(i,1); renderEncounters(); syncToFirebase(); });
+                delBtn.addEventListener('click', (e) => { e.stopPropagation(); characterData.encounters.splice(i,1); renderEncounters(); });
                 titleDiv.appendChild(delBtn);
                 titleDiv.addEventListener('click', () => {
                     currentEncounterIndex = i;
@@ -755,14 +723,17 @@
             if (!characterData.xpLog) characterData.xpLog = [];
             characterData.xpLog.push({ reason, amount, date: new Date().toISOString() });
             characterData.xp = (characterData.xp || 0) + amount;
-            renderAll(); syncToFirebase();
+            renderAll();
+            // No sincroniza automáticamente
         }
 
+        // ========== INICIALIZACIÓN ==========
         window.addEventListener('DOMContentLoaded', () => {
             listenToFirebase();
             setTimeout(() => { if (!characterData._cloudSynced) renderAll(); }, 2000);
+
             document.getElementById('syncToCloudBtn').addEventListener('click', syncToFirebase);
-            document.getElementById('addItemBtn').addEventListener('click', () => { characterData.inventory.push('Nuevo objeto'); renderInventory(); syncToFirebase(); });
+            document.getElementById('addItemBtn').addEventListener('click', () => { characterData.inventory.push('Nuevo objeto'); renderInventory(); });
             document.getElementById('addEncounterBtn').addEventListener('click', () => {
                 currentEncounterIndex = -1;
                 document.getElementById('encounterModalTitle').textContent = 'Nuevo Encuentro';
@@ -771,30 +742,39 @@
                 document.getElementById('encounterModal').style.display = 'block';
             });
             document.querySelectorAll('.add-skill-btn').forEach(btn => btn.addEventListener('click', () => addSkill(btn.dataset.type)));
-            document.getElementById('openBackgroundModalBtn').addEventListener('click', () => { document.getElementById('fullBackgroundText').textContent = characterData.background; document.getElementById('backgroundModal').style.display = 'block'; });
-            document.getElementById('closeBackgroundModal').addEventListener('click', () => document.getElementById('backgroundModal').style.display = 'none');
+
+            // Modales
+            document.getElementById('openBackgroundModalBtn').addEventListener('click', () => {
+                document.getElementById('fullBackgroundText').textContent = characterData.background;
+                document.getElementById('backgroundModal').style.display = 'block';
+            });
             document.getElementById('openTraitModalBtn').addEventListener('click', () => document.getElementById('traitModal').style.display = 'block');
-            document.getElementById('closeTraitModal').addEventListener('click', () => document.getElementById('traitModal').style.display = 'none');
             document.getElementById('openXpLogBtn').addEventListener('click', () => document.getElementById('xpLogModal').style.display = 'block');
+
+            document.getElementById('closeBackgroundModal').addEventListener('click', () => document.getElementById('backgroundModal').style.display = 'none');
+            document.getElementById('closeTraitModal').addEventListener('click', () => document.getElementById('traitModal').style.display = 'none');
             document.getElementById('closeXpLogModal').addEventListener('click', () => document.getElementById('xpLogModal').style.display = 'none');
+            document.getElementById('closeEncounterModal').addEventListener('click', () => document.getElementById('encounterModal').style.display = 'none');
+
+            window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
+
             document.getElementById('addXpEntryBtn').addEventListener('click', () => {
                 const amount = parseInt(document.getElementById('xpAmountInput').value) || 1;
                 const reason = prompt('Motivo de la experiencia:');
                 if (reason) addXpEntry(reason, amount);
             });
-            document.getElementById('closeEncounterModal').addEventListener('click', () => document.getElementById('encounterModal').style.display = 'none');
+
             document.getElementById('saveEncounterBtn').addEventListener('click', () => {
                 const title = document.getElementById('encounterTitleInput').value;
                 const summary = document.getElementById('encounterSummaryInput').value;
                 if (!title) return alert('Título obligatorio');
                 if (currentEncounterIndex >= 0) characterData.encounters[currentEncounterIndex] = { title, summary };
                 else characterData.encounters.push({ title, summary });
-                renderEncounters(); syncToFirebase(); document.getElementById('encounterModal').style.display = 'none';
+                renderEncounters();
+                document.getElementById('encounterModal').style.display = 'none';
             });
-            window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
-            ['ageDisplay','conceptDisplay','xpDisplay','willpowerCurrent','willpowerMax','energyCurrent','energyMax'].forEach(id => {
-                const el = document.getElementById(id); if (el) el.addEventListener('blur', () => { collectFromEditable(); syncToFirebase(); });
-            });
+
+            // Los campos editables no disparan sync automático
         });
     })();
 </script>
