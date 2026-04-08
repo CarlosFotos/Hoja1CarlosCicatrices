@@ -547,15 +547,14 @@
     (function(){
         "use strict";
 
-        // ========== CONFIGURACIÓN DE FIREBASE ==========
-        // ⚠️ REEMPLAZA CON TUS DATOS DE FIREBASE
+        // ========== CONFIGURACIÓN DE FIREBASE (ACTUALIZADA) ==========
         const firebaseConfig = {
-            apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            authDomain: "tu-proyecto.firebaseapp.com",
-            projectId: "tu-proyecto",
-            storageBucket: "tu-proyecto.appspot.com",
-            messagingSenderId: "000000000000",
-            appId: "1:000000000000:web:xxxxxxxxxxxxxxxx"
+            apiKey: "AIzaSyAgB2EzayEn3Ipf5SSUkUdjCdqFQ79ieCY",
+            authDomain: "cicatrices-umbral-machu.firebaseapp.com",
+            projectId: "cicatrices-umbral-machu",
+            storageBucket: "cicatrices-umbral-machu.firebasestorage.app",
+            messagingSenderId: "834104504517",
+            appId: "1:834104504517:web:05c517173cc3e604d280ac"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -861,7 +860,6 @@
                 const inp = document.createElement('input');
                 inp.type = 'text';
                 inp.value = item;
-                // Solución: no llamar a syncToFirebase en cada input, usar debounce o solo al perder foco
                 inp.addEventListener('input', (e) => {
                     characterData.inventory[i] = e.target.value;
                 });
@@ -1054,7 +1052,6 @@
                 if (e.target.classList.contains('modal')) e.target.style.display = 'none';
             });
 
-            // Sincronización automática al editar campos de texto (con debounce implícito por blur)
             const editableFields = ['ageDisplay', 'conceptDisplay', 'xpDisplay', 'willpowerCurrent', 'willpowerMax', 'energyCurrent', 'energyMax'];
             editableFields.forEach(id => {
                 const el = document.getElementById(id);
