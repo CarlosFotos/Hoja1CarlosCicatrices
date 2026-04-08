@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Personaje · Vampiro: La Mascarada</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: 'Segoe UI', 'Candara', 'Palatino', system-ui, sans-serif;
+        }
+        body {
+            background: #0c0b0e;
+            background-image: radial-gradient(circle at 20% 30%, #1e1a24 0%, #040306 100%);
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            color: #e4d9cd;
+        }
+        .sheet {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(20, 16, 26, 0.92);
+            backdrop-filter: blur(4px);
+            border: 1px solid #5e4b6e;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 0 1px #3a2e44 inset;
+            border-radius: 24px;
+            padding: 28px 24px;
+        }
+        h1 {
+            font-family: 'Times New Roman', serif;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-size: 2.2rem;
+            color: #c9b6e0;
+            text-shadow: 0 0 6px #7a4c9e;
+            border-bottom: 2px solid #6a4e7a;
+            padding-bottom: 8px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+        h1 small {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: #b89bc9;
+        }
+        h2 {
+            font-family: 'Times New Roman', serif;
+            font-weight: 400;
+            font-size: 1.6rem;
+            border-left: 6px solid #9f7eb3;
+            padding-left: 14px;
+            margin: 24px 0 12px 0;
+            color: #dac5e8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        h3 {
+            font-weight: 500;
+            color: #cbb2de;
+            margin: 12px 0 8px;
+            font-size: 1.2rem;
+            border-bottom: 1px dashed #5e4b6e;
+            padding-bottom: 4px;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 24px;
+        }
+        .grid-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px 16px;
+        }
+        .stat-block {
+            background: #1f1929;
+            border-radius: 18px;
+            padding: 16px 18px;
+            border: 1px solid #463b52;
+            box-shadow: inset 0 2px 5px #0a070e, 0 4px 8px #00000033;
+        }
+        .dot-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .dot-label {
+            font-weight: 600;
+            color: #cfc1dd;
+            min-width: 110px;
+        }
+        .dot-control {
+            display: flex;
+            gap: 6px;
+        }
+        .dot {
+            font-size: 24px;
+            cursor: pointer;
+            color: #3d3149;
+            text-shadow: 0 0 2px black;
+            transition: 0.1s;
+            user-select: none;
+        }
+        .dot.filled {
+            color: #b386d9;
+            text-shadow: 0 0 12px #a55cdf;
+        }
+        .dot:hover {
+            transform: scale(1.2);
+        }
+        .inline-value {
+            font-family: monospace;
+            background: #261f30;
+            padding: 2px 8px;
+            border-radius: 20px;
+            border: 1px solid #6f5590;
+        }
+        input, textarea, [contenteditable="true"] {
+            background: #140f1c;
+            border: 1px solid #6a4e7a;
+            color: #f2e7f9;
+            padding: 6px 10px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            width: 100%;
+            margin: 4px 0;
+        }
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .health-track {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .health-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .boxes {
+            display: flex;
+            gap: 6px;
+        }
+        .box {
+            width: 28px;
+            height: 28px;
+            background: #1c1426;
+            border: 2px solid #775d96;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #e1d0f0;
+        }
+        .box.marked {
+            background: #6d3f9e;
+            border-color: #d6b0ff;
+            box-shadow: 0 0 8px #a974d9;
+        }
+        .inventory-list {
+            list-style: none;
+            padding: 0;
+        }
+        .inventory-list li {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+            align-items: center;
+        }
+        .inventory-list input {
+            flex: 1;
+        }
+        .button-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background: #2f253b;
+            border: 1px solid #8f72aa;
+            color: #f0e4ff;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #110c16;
+            transition: 0.1s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .btn:hover {
+            background: #4a3860;
+            border-color: #c09ee6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #110c16;
+        }
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #110c16;
+        }
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .power-card {
+            background: #1e1727;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-left: 8px solid #6f4a8e;
+        }
+        .badge {
+            background: #372c45;
+            border-radius: 30px;
+            padding: 2px 12px;
+            font-size: 0.8rem;
+            color: #dac0f0;
+        }
+        .xp-badge {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #dbba6b;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: right;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+<div class="sheet">
+    <h1>📜 TUKI TUN <small>Rastreador del Umbral</small></h1>
+    <!-- Cabecera editable -->
+    <div class="flex-row" style="justify-content: space-between;">
+        <div style="display: flex; gap: 20px;">
+            <div><span style="color:#b8a4cc;">Edad:</span> <span contenteditable="true" id="ageDisplay">12 años</span></div>
+            <div><span style="color:#b8a4cc;">Concepto:</span> <span contenteditable="true" id="conceptDisplay">Rastreador del Umbral</span></div>
+        </div>
+        <div><span style="color:#b8a4cc;">Experiencia Total:</span> <span contenteditable="true" id="xpDisplay" class="xp-badge">4 XP</span></div>
+    </div>
+    
+    <!-- I. Trasfondo -->
+    <h2>I. Trasfondo · La Herencia de Laura</h2>
+    <div class="stat-block">
+        <textarea id="backgroundText" placeholder="Escribe el trasfondo..."></textarea>
+    </div>
+
+    <!-- II. Atributos -->
+    <h2>II. Atributos</h2>
+    <div class="grid-3col">
+        <div class="stat-block">
+            <h3>🏋️ Físicos (3 pts)</h3>
+            <div id="attr-fisicos"></div>
+        </div>
+        <div class="stat-block">
+            <h3>🎭 Sociales (7 pts)</h3>
+            <div id="attr-sociales"></div>
+        </div>
+        <div class="stat-block">
+            <h3>🧠 Mentales (5 pts)</h3>
+            <div id="attr-mentales"></div>
+        </div>
+    </div>
+
+    <!-- III. Habilidades -->
+    <h2>III. Habilidades (13/9/5)</h2>
+    <div class="grid-3col">
+        <div class="stat-block">
+            <h3>✨ Talentos (13)</h3>
+            <div id="skills-talentos"></div>
+        </div>
+        <div class="stat-block">
+            <h3>🔧 Técnicas (9)</h3>
+            <div id="skills-tecnicas"></div>
+        </div>
+        <div class="stat-block">
+            <h3>📚 Conocimientos (5)</h3>
+            <div id="skills-conocimientos"></div>
+        </div>
+    </div>
+
+    <!-- IV. Ventajas y Poderes -->
+    <h2>IV. Ventajas y Poderes</h2>
+    <div class="stat-block">
+        <div class="power-card">
+            <strong style="font-size:1.2rem;">🌀 Cicatriz Caótica (Violeta)</strong><br>
+            <span class="badge">Pasivo</span> Suerte Anómala (Repite 3 tiradas fallidas al día).<br>
+            <span class="badge">Activo</span> Ruptura Local (Crea/amplifica grietas a 1m de la mano). Coste: 1 PE + 1 FV.
+        </div>
+        <div class="power-card">
+            <strong>👁️ Detectar Fractura (Violeta)</strong> — Ve fracturas ocultas o futuras. Coste: 1 PE. Dificultad: 5. Rango: 10m.
+        </div>
+        <div class="power-card">
+            <strong>💧 Columna de Agua (Azul)</strong> — 3d10 daño elemental. Coste: 3 PE. Éxito automático con gesto de ambas manos. Rango: 12m.
+        </div>
+        <p><em>Los poderes se muestran como referencia; puedes añadir campos editables si deseas.</em></p>
+    </div>
+
+    <!-- V. Virtudes y Estado de Salud -->
+    <h2>V. Virtudes · Voluntad · Energía · Inestabilidad</h2>
+    <div class="grid-2col">
+        <div class="stat-block">
+            <h3>⚖️ Virtudes</h3>
+            <div id="virtues-container"></div>
+            <div style="margin-top: 20px;">
+                <div><strong>Fuerza de Voluntad (FV):</strong> 
+                    <input type="number" id="willpowerCurrent" min="0" max="10" style="width:70px;"> / 
+                    <input type="number" id="willpowerMax" min="0" max="10" style="width:70px;">
+                </div>
+                <div><strong>Puntos de Energía (PE):</strong> 
+                    <input type="number" id="energyCurrent" min="0" max="20" style="width:70px;"> / 
+                    <input type="number" id="energyMax" min="0" max="20" style="width:70px;">
+                    <span style="margin-left:12px; color:#cc6666;">(Estado Crítico)</span>
+                </div>
+                <div><strong>Inestabilidad:</strong> 
+                    <span id="instabilityBoxes" class="boxes"></span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-block">
+            <h3>❤️ Salud</h3>
+            <div id="healthTrack" class="health-track"></div>
+        </div>
+    </div>
+
+    <!-- VI. Inventario -->
+    <h2>VI. Inventario</h2>
+    <div class="stat-block">
+        <ul class="inventory-list" id="inventoryList"></ul>
+        <button class="btn" id="addItemBtn" style="padding:4px 16px;">+ Añadir objeto</button>
+    </div>
+
+    <!-- Botones de control -->
+    <div class="button-bar">
+        <button class="btn" id="saveBtn">💾 Guardar hoja (JSON)</button>
+        <button class="btn" id="loadBtn">📂 Cargar hoja</button>
+        <button class="btn" id="resetBtn">🔄 Restaurar Tuki Tun</button>
+    </div>
+    <footer>🩸 Vampiro: La Mascarada · Hoja editable</footer>
+</div>
+
+<script>
+    (function(){
+        "use strict";
+
+        // ---------- Estructura base según el JSON proporcionado ----------
+        const DEFAULT_DATA = {
+            age: '12 años',
+            concept: 'Rastreador del Umbral',
+            xp: '4 XP',
+            background: `Tuki Tun creció bajo el cuidado de su madre, Laura de las Flores, una talentosa cocinera de pueblo que hacía milagros con lo poco que tenían. Su infancia terminó abruptamente cuando Laura contrajo una misteriosa enfermedad que la hacía toser sangre sin cesar, una dolencia que ningún médico pudo identificar y que acabó con su vida mientras Tuki la cuidaba en su precaria cama. Inmediatamente después de quedar solo tras el fallecimiento de su madre, Tuki se fue a vivir al orfanato. No conoció a su padre y su vida actual está marcada por la transición desde el hogar de su madre hacia la estructura del orfanato.`,
+            attributes: {
+                fisicos: [
+                    { name: 'Fuerza', base: 1, extra: 1 },
+                    { name: 'Destreza', base: 1, extra: 1 },
+                    { name: 'Resistencia', base: 1, extra: 1 }
+                ],
+                sociales: [
+                    { name: 'Carisma', base: 1, extra: 3 },
+                    { name: 'Manipulación', base: 1, extra: 2 },
+                    { name: 'Apariencia', base: 1, extra: 2 }
+                ],
+                mentales: [
+                    { name: 'Percepción', base: 1, extra: 2 },
+                    { name: 'Inteligencia', base: 1, extra: 1 },
+                    { name: 'Astucia', base: 1, extra: 2 }
+                ]
+            },
+            skills: {
+                talentos: [
+                    { name: 'Alerta', value: 4 },
+                    { name: 'Esquivar', value: 3 },
+                    { name: 'Empatía', value: 3 },
+                    { name: 'Subterfugio', value: 3 }
+                ],
+                tecnicas: [
+                    { name: 'Sigilo', value: 3 },
+                    { name: 'Supervivencia', value: 4 },
+                    { name: 'Armas C.C.', value: 2 }
+                ],
+                conocimientos: [
+                    { name: 'Ocultismo', value: 3 },
+                    { name: 'Investigación', value: 2 }
+                ]
+            },
+            virtues: [
+                { name: 'Conciencia', value: 3 },
+                { name: 'Autocontrol', value: 3 },
+                { name: 'Coraje', value: 4 }
+            ],
+            willpower: { current: 3, max: 3 },
+            energy: { current: 1, max: 7 },
+            instability: [false, false, false, false, false],
+            health: [
+                { name: 'Magullado', penalty: 0, boxes: 1, marked: true },
+                { name: 'Lastimado', penalty: -1, boxes: 1, marked: true },
+                { name: 'Lesionado', penalty: -1, boxes: 1, marked: false },
+                { name: 'Herido', penalty: -2, boxes: 1, marked: false },
+                { name: 'Malherido', penalty: -2, boxes: 1, marked: false },
+                { name: 'Tullido', penalty: -5, boxes: 1, marked: false },
+                { name: 'Incapacitado', penalty: null, boxes: 1, marked: false }
+            ],
+            inventory: [
+                '01-Barra de ración',
+                '02-Cuchillo',
+                '03-Libreta de Oren Kaltis',
+                '04-Pequeño morral con cristales'
+            ]
+        };
+
+        // Estado global de la hoja (se inicializa con copia profunda del default)
+        let characterData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+        // ---------- Renderizado de componentes ----------
+        function renderDots(containerId, items, category) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            items.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'dot-row';
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'dot-label';
+                labelSpan.textContent = item.name + ':';
+                const dotDiv = document.createElement('div');
+                dotDiv.className = 'dot-control';
+                
+                const currentValue = item.value !== undefined ? item.value : (item.base + item.extra);
+                
+                for (let i = 1; i <= 5; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'dot' + (i <= currentValue ? ' filled' : '');
+                    dot.textContent = '●';
+                    dot.dataset.index = idx;
+                    dot.dataset.level = i;
+                    dot.addEventListener('click', (e) => {
+                        const newVal = parseInt(e.target.dataset.level);
+                        if (item.value !== undefined) {
+                            item.value = newVal;
+                        } else {
+                            item.extra = newVal - item.base;
+                        }
+                        renderAll();
+                    });
+                    dotDiv.appendChild(dot);
+                }
+                const valueDisplay = document.createElement('span');
+                valueDisplay.className = 'inline-value';
+                valueDisplay.textContent = `${currentValue} ●`;
+                row.appendChild(labelSpan);
+                row.appendChild(dotDiv);
+                row.appendChild(valueDisplay);
+                container.appendChild(row);
+            });
+        }
+
+        function renderVirtues() {
+            const cont = document.getElementById('virtues-container');
+            cont.innerHTML = '';
+            characterData.virtues.forEach((v, idx) => {
+                const row = document.createElement('div');
+                row.className = 'dot-row';
+                row.innerHTML = `<span class="dot-label">${v.name}:</span>`;
+                const dotDiv = document.createElement('div');
+                dotDiv.className = 'dot-control';
+                for (let i=1; i<=5; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'dot' + (i <= v.value ? ' filled' : '');
+                    dot.textContent = '●';
+                    dot.dataset.index = idx;
+                    dot.dataset.level = i;
+                    dot.addEventListener('click', (e) => {
+                        characterData.virtues[idx].value = parseInt(e.target.dataset.level);
+                        renderAll();
+                    });
+                    dotDiv.appendChild(dot);
+                }
+                row.appendChild(dotDiv);
+                const valSpan = document.createElement('span');
+                valSpan.className = 'inline-value';
+                valSpan.textContent = `${v.value} ●`;
+                row.appendChild(valSpan);
+                cont.appendChild(row);
+            });
+        }
+
+        function renderHealth() {
+            const track = document.getElementById('healthTrack');
+            track.innerHTML = '';
+            characterData.health.forEach((level, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'health-box';
+                const label = document.createElement('span');
+                label.style.minWidth = '110px';
+                label.textContent = `${level.name} (${level.penalty !== null ? level.penalty : '—'})`;
+                const boxesDiv = document.createElement('div');
+                boxesDiv.className = 'boxes';
+                for (let b = 0; b < level.boxes; b++) {
+                    const box = document.createElement('div');
+                    box.className = 'box' + (level.marked ? ' marked' : '');
+                    box.textContent = level.marked ? 'X' : '';
+                    box.addEventListener('click', () => {
+                        characterData.health[idx].marked = !characterData.health[idx].marked;
+                        renderHealth();
+                    });
+                    boxesDiv.appendChild(box);
+                }
+                wrapper.appendChild(label);
+                wrapper.appendChild(boxesDiv);
+                track.appendChild(wrapper);
+            });
+        }
+
+        function renderInstability() {
+            const cont = document.getElementById('instabilityBoxes');
+            cont.innerHTML = '';
+            characterData.instability.forEach((mark, i) => {
+                const box = document.createElement('div');
+                box.className = 'box' + (mark ? ' marked' : '');
+                box.textContent = mark ? 'X' : '';
+                box.addEventListener('click', () => {
+                    characterData.instability[i] = !characterData.instability[i];
+                    renderInstability();
+                });
+                cont.appendChild(box);
+            });
+        }
+
+        function renderInventory() {
+            const list = document.getElementById('inventoryList');
+            list.innerHTML = '';
+            characterData.inventory.forEach((item, i) => {
+                const li = document.createElement('li');
+                const inp = document.createElement('input');
+                inp.type = 'text';
+                inp.value = item;
+                inp.addEventListener('input', (e) => {
+                    characterData.inventory[i] = e.target.value;
+                });
+                const delBtn = document.createElement('button');
+                delBtn.textContent = '✕';
+                delBtn.style.background = '#3d2a4a';
+                delBtn.style.border = 'none';
+                delBtn.style.color = 'white';
+                delBtn.style.borderRadius = '20px';
+                delBtn.style.cursor = 'pointer';
+                delBtn.style.marginLeft = '8px';
+                delBtn.addEventListener('click', () => {
+                    characterData.inventory.splice(i,1);
+                    renderInventory();
+                });
+                li.appendChild(inp);
+                li.appendChild(delBtn);
+                list.appendChild(li);
+            });
+        }
+
+        function syncEditableFields() {
+            document.getElementById('ageDisplay').innerText = characterData.age;
+            document.getElementById('conceptDisplay').innerText = characterData.concept;
+            document.getElementById('xpDisplay').innerText = characterData.xp;
+            document.getElementById('backgroundText').value = characterData.background;
+            document.getElementById('willpowerCurrent').value = characterData.willpower.current;
+            document.getElementById('willpowerMax').value = characterData.willpower.max;
+            document.getElementById('energyCurrent').value = characterData.energy.current;
+            document.getElementById('energyMax').value = characterData.energy.max;
+        }
+
+        function collectFromEditable() {
+            characterData.age = document.getElementById('ageDisplay').innerText;
+            characterData.concept = document.getElementById('conceptDisplay').innerText;
+            characterData.xp = document.getElementById('xpDisplay').innerText;
+            characterData.background = document.getElementById('backgroundText').value;
+            characterData.willpower.current = parseInt(document.getElementById('willpowerCurrent').value) || 0;
+            characterData.willpower.max = parseInt(document.getElementById('willpowerMax').value) || 0;
+            characterData.energy.current = parseInt(document.getElementById('energyCurrent').value) || 0;
+            characterData.energy.max = parseInt(document.getElementById('energyMax').value) || 0;
+        }
+
+        function renderAll() {
+            renderDots('attr-fisicos', characterData.attributes.fisicos);
+            renderDots('attr-sociales', characterData.attributes.sociales);
+            renderDots('attr-mentales', characterData.attributes.mentales);
+            renderDots('skills-talentos', characterData.skills.talentos.map(t => ({ name: t.name, value: t.value })));
+            renderDots('skills-tecnicas', characterData.skills.tecnicas.map(t => ({ name: t.name, value: t.value })));
+            renderDots('skills-conocimientos', characterData.skills.conocimientos.map(t => ({ name: t.name, value: t.value })));
+            renderVirtues();
+            renderHealth();
+            renderInstability();
+            renderInventory();
+            syncEditableFields();
+        }
+
+        // ---------- Guardar / Cargar ----------
+        function saveToFile() {
+            collectFromEditable();
+            const dataStr = JSON.stringify(characterData, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tuki_tun_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadFromFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const loaded = JSON.parse(e.target.result);
+                    characterData = loaded;
+                    renderAll();
+                } catch (err) {
+                    alert('Archivo inválido');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefault() {
+            characterData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+            renderAll();
+        }
+
+        // ---------- Inicialización ----------
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAll();
+
+            document.getElementById('saveBtn').addEventListener('click', saveToFile);
+            document.getElementById('loadBtn').addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json,application/json';
+                input.onchange = (e) => { if (input.files[0]) loadFromFile(input.files[0]); };
+                input.click();
+            });
+            document.getElementById('resetBtn').addEventListener('click', resetToDefault);
+            document.getElementById('addItemBtn').addEventListener('click', () => {
+                characterData.inventory.push('Nuevo objeto');
+                renderInventory();
+            });
+
+            // Sincronizar cambios de contenteditable
+            document.getElementById('ageDisplay').addEventListener('input', (e) => { characterData.age = e.target.innerText; });
+            document.getElementById('conceptDisplay').addEventListener('input', (e) => { characterData.concept = e.target.innerText; });
+            document.getElementById('xpDisplay').addEventListener('input', (e) => { characterData.xp = e.target.innerText; });
+            document.getElementById('backgroundText').addEventListener('input', (e) => { characterData.background = e.target.value; });
+            document.getElementById('willpowerCurrent').addEventListener('input', (e) => { characterData.willpower.current = parseInt(e.target.value)||0; });
+            document.getElementById('willpowerMax').addEventListener('input', (e) => { characterData.willpower.max = parseInt(e.target.value)||0; });
+            document.getElementById('energyCurrent').addEventListener('input', (e) => { characterData.energy.current = parseInt(e.target.value)||0; });
+            document.getElementById('energyMax').addEventListener('input', (e) => { characterData.energy.max = parseInt(e.target.value)||0; });
+        });
+    })();
+</script>
+</body>
+</html>
