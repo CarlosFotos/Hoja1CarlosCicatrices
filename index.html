@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
+        /* ===== ESTILOS GENERALES (sin cambios) ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -97,6 +98,11 @@
             font-weight: 600;
             color: #cfc1dd;
             min-width: 130px;
+            cursor: pointer;
+        }
+        .dot-label:hover {
+            text-decoration: underline;
+            color: #e0c8ff;
         }
         .dot-control {
             display: flex;
@@ -334,6 +340,22 @@
             font-size: 18px;
             cursor: pointer;
         }
+        /* Botón pequeño para añadir habilidades */
+        .add-skill-btn {
+            margin-top: 8px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            background: #3a2e4a;
+            border: 1px dashed #8f72aa;
+        }
+        .delete-skill-btn {
+            background: none;
+            border: none;
+            color: #cc6666;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
@@ -379,14 +401,17 @@
         <div class="stat-block">
             <h3>✨ Talentos (13)</h3>
             <div id="skills-talentos"></div>
+            <button class="btn add-skill-btn" data-type="talentos">+ Añadir talento</button>
         </div>
         <div class="stat-block">
             <h3>🔧 Técnicas (9)</h3>
             <div id="skills-tecnicas"></div>
+            <button class="btn add-skill-btn" data-type="tecnicas">+ Añadir técnica</button>
         </div>
         <div class="stat-block">
             <h3>📚 Conocimientos (5)</h3>
             <div id="skills-conocimientos"></div>
+            <button class="btn add-skill-btn" data-type="conocimientos">+ Añadir conocimiento</button>
         </div>
     </div>
 
@@ -481,13 +506,13 @@
 
     <!-- Botones de control -->
     <div class="button-bar">
-        <button class="btn" id="syncToCloudBtn">☁️ Sincronizar ahora</button>
+        <button class="btn" id="syncToCloudBtn">☁️ Sincronizar ahora (requiere contraseña)</button>
         <button class="btn" id="resetBtn">🔄 Restaurar Tuki Tun</button>
     </div>
     <footer>🩸 Cicatrices del Umbral · Hoja colaborativa (Firebase)</footer>
 </div>
 
-<!-- ===== MODALES ===== -->
+<!-- ===== MODALES (sin cambios) ===== -->
 
 <!-- Modal: Historia completa (Trasfondo) -->
 <div id="backgroundModal" class="modal">
@@ -547,7 +572,7 @@
     (function(){
         "use strict";
 
-        // ========== CONFIGURACIÓN DE FIREBASE (ACTUALIZADA) ==========
+        // ========== CONFIGURACIÓN DE FIREBASE ==========
         const firebaseConfig = {
             apiKey: "AIzaSyAgB2EzayEn3Ipf5SSUkUdjCdqFQ79ieCY",
             authDomain: "cicatrices-umbral-machu.firebaseapp.com",
@@ -596,12 +621,12 @@
                 tecnicas: [
                     { name: 'Sigilo', value: 3 },
                     { name: 'Supervivencia', value: 4 },
-                    { name: 'Armas C.C.', value: 2 }
+                    { name: 'Armas C.C.', value: 2 },
+                    { name: 'Cocinar', value: 3 }
                 ],
                 conocimientos: [
                     { name: 'Ocultismo', value: 2 },
-                    { name: 'Investigación', value: 1 },
-                    { name: 'Cocinar', value: 3 }
+                    { name: 'Investigación', value: 1 }
                 ]
             },
             backgrounds: [
@@ -641,11 +666,16 @@
         let characterData = JSON.parse(JSON.stringify(DEFAULT_DATA));
         let currentEncounterIndex = -1;
 
-        // ========== SINCRONIZACIÓN CON FIREBASE ==========
+        // ========== SINCRONIZACIÓN CON FIREBASE (MANUAL CON CONTRASEÑA) ==========
         function syncToFirebase() {
+            const password = prompt('🔐 Ingresa la contraseña para sincronizar con la nube:');
+            if (password !== '92647213') {
+                alert('❌ Contraseña incorrecta. No se sincronizó.');
+                return;
+            }
             collectFromEditable();
             characterDocRef.set(characterData)
-                .then(() => console.log('✅ Sincronizado'))
+                .then(() => alert('✅ Datos sincronizados correctamente'))
                 .catch(err => alert('❌ Error al sincronizar: ' + err));
         }
 
@@ -663,7 +693,96 @@
             });
         }
 
-        // ========== RENDERIZADO ==========
+        // ========== RENDERIZADO DE HABILIDADES (CON EDICIÓN Y AÑADIR) ==========
+        function renderSkills(containerId, skillsArray, type) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            skillsArray.forEach((skill, idx) => {
+                const row = document.createElement('div');
+                row.className = 'dot-row';
+                
+                // Label editable
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'dot-label';
+                labelSpan.textContent = skill.name + ':';
+                labelSpan.addEventListener('dblclick', () => {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = skill.name;
+                    input.style.width = '120px';
+                    input.addEventListener('blur', () => {
+                        skill.name = input.value || 'Habilidad';
+                        renderAll();
+                    });
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') input.blur();
+                    });
+                    labelSpan.innerHTML = '';
+                    labelSpan.appendChild(input);
+                    input.focus();
+                });
+                
+                const dotDiv = document.createElement('div');
+                dotDiv.className = 'dot-control';
+                
+                const currentValue = skill.value;
+                
+                for (let i = 1; i <= 5; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'dot' + (i <= currentValue ? ' filled' : '');
+                    dot.textContent = '●';
+                    dot.dataset.index = idx;
+                    dot.dataset.level = i;
+                    dot.addEventListener('click', (e) => {
+                        const newVal = parseInt(e.target.dataset.level);
+                        skill.value = newVal;
+                        renderAll();
+                    });
+                    dotDiv.appendChild(dot);
+                }
+                
+                const valueDisplay = document.createElement('span');
+                valueDisplay.className = 'inline-value';
+                valueDisplay.textContent = `${currentValue} ●`;
+                
+                // Botón eliminar
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-skill-btn';
+                delBtn.innerHTML = '🗑️';
+                delBtn.addEventListener('click', () => {
+                    skillsArray.splice(idx, 1);
+                    renderAll();
+                });
+                
+                row.appendChild(labelSpan);
+                row.appendChild(dotDiv);
+                row.appendChild(valueDisplay);
+                row.appendChild(delBtn);
+                container.appendChild(row);
+            });
+        }
+
+        // Modificar renderAll para usar la nueva función de habilidades
+        const originalRenderAll = function() {
+            renderDots('attr-fisicos', characterData.attributes.fisicos);
+            renderDots('attr-sociales', characterData.attributes.sociales);
+            renderDots('attr-mentales', characterData.attributes.mentales);
+            
+            renderSkills('skills-talentos', characterData.skills.talentos, 'talentos');
+            renderSkills('skills-tecnicas', characterData.skills.tecnicas, 'tecnicas');
+            renderSkills('skills-conocimientos', characterData.skills.conocimientos, 'conocimientos');
+            
+            renderBackgrounds();
+            renderVirtudes();
+            renderInstability();
+            renderHealth();
+            renderInventory();
+            renderEncounters();
+            syncEditableFields();
+        };
+
+        // Mantener compatibilidad con renderDots para atributos
         function renderDots(containerId, items) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -693,7 +812,6 @@
                             item.extra = newVal - item.base;
                         }
                         renderAll();
-                        syncToFirebase();
                     });
                     dotDiv.appendChild(dot);
                 }
@@ -727,7 +845,6 @@
                     dot.addEventListener('click', (e) => {
                         characterData.backgrounds[idx].value = parseInt(e.target.dataset.level);
                         renderAll();
-                        syncToFirebase();
                     });
                     dotDiv.appendChild(dot);
                 }
@@ -767,7 +884,6 @@
                         characterData.virtues[idx].value = parseInt(e.target.dataset.level);
                         updateInstabilityMax();
                         renderAll();
-                        syncToFirebase();
                     });
                     dotDiv.appendChild(dot);
                 }
@@ -804,7 +920,6 @@
                 box.addEventListener('click', () => {
                     characterData.instability[i] = !characterData.instability[i];
                     renderInstability();
-                    syncToFirebase();
                 });
                 cont.appendChild(box);
             });
@@ -829,7 +944,6 @@
                     input.value = level.description || '';
                     input.addEventListener('input', (e) => {
                         characterData.health[idx].description = e.target.value;
-                        syncToFirebase();
                     });
                     wrapper.appendChild(label);
                     wrapper.appendChild(input);
@@ -841,7 +955,6 @@
                         box.addEventListener('click', () => {
                             characterData.health[idx].marked = !characterData.health[idx].marked;
                             renderHealth();
-                            syncToFirebase();
                         });
                         boxesDiv.appendChild(box);
                     }
@@ -863,9 +976,6 @@
                 inp.addEventListener('input', (e) => {
                     characterData.inventory[i] = e.target.value;
                 });
-                inp.addEventListener('blur', () => {
-                    syncToFirebase();
-                });
                 const delBtn = document.createElement('button');
                 delBtn.textContent = '✕';
                 delBtn.style.background = '#3d2a4a';
@@ -877,7 +987,6 @@
                 delBtn.addEventListener('click', () => {
                     characterData.inventory.splice(i,1);
                     renderInventory();
-                    syncToFirebase();
                 });
                 li.appendChild(inp);
                 li.appendChild(delBtn);
@@ -902,7 +1011,6 @@
                     e.stopPropagation();
                     characterData.encounters.splice(i,1);
                     renderEncounters();
-                    syncToFirebase();
                 });
                 titleDiv.appendChild(delBtn);
                 titleDiv.addEventListener('click', () => {
@@ -954,19 +1062,7 @@
         }
 
         function renderAll() {
-            renderDots('attr-fisicos', characterData.attributes.fisicos);
-            renderDots('attr-sociales', characterData.attributes.sociales);
-            renderDots('attr-mentales', characterData.attributes.mentales);
-            renderDots('skills-talentos', characterData.skills.talentos.map(t => ({ name: t.name, value: t.value })));
-            renderDots('skills-tecnicas', characterData.skills.tecnicas.map(t => ({ name: t.name, value: t.value })));
-            renderDots('skills-conocimientos', characterData.skills.conocimientos.map(t => ({ name: t.name, value: t.value })));
-            renderBackgrounds();
-            renderVirtudes();
-            renderInstability();
-            renderHealth();
-            renderInventory();
-            renderEncounters();
-            syncEditableFields();
+            originalRenderAll();
         }
 
         function addXpEntry(reason, amount = 1) {
@@ -974,7 +1070,6 @@
             characterData.xpLog.push({ reason, amount, date: new Date().toISOString() });
             characterData.xp = (characterData.xp || 0) + amount;
             renderAll();
-            syncToFirebase();
         }
 
         // ========== INICIALIZACIÓN ==========
@@ -987,13 +1082,11 @@
                 if (confirm('¿Restaurar valores por defecto? Se perderán los cambios no guardados.')) {
                     characterData = JSON.parse(JSON.stringify(DEFAULT_DATA));
                     renderAll();
-                    syncToFirebase();
                 }
             });
             document.getElementById('addItemBtn').addEventListener('click', () => {
                 characterData.inventory.push('Nuevo objeto');
                 renderInventory();
-                syncToFirebase();
             });
             document.getElementById('addEncounterBtn').addEventListener('click', () => {
                 currentEncounterIndex = -1;
@@ -1001,6 +1094,16 @@
                 document.getElementById('encounterTitleInput').value = '';
                 document.getElementById('encounterSummaryInput').value = '';
                 document.getElementById('encounterModal').style.display = 'block';
+            });
+
+            // Botones añadir habilidad
+            document.querySelectorAll('.add-skill-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const type = e.target.dataset.type;
+                    const newSkill = { name: 'Nueva', value: 0 };
+                    characterData.skills[type].push(newSkill);
+                    renderAll();
+                });
             });
 
             document.getElementById('openBackgroundModalBtn').addEventListener('click', () => {
@@ -1044,7 +1147,6 @@
                     characterData.encounters.push({ title, summary });
                 }
                 renderEncounters();
-                syncToFirebase();
                 document.getElementById('encounterModal').style.display = 'none';
             });
 
@@ -1052,11 +1154,7 @@
                 if (e.target.classList.contains('modal')) e.target.style.display = 'none';
             });
 
-            const editableFields = ['ageDisplay', 'conceptDisplay', 'xpDisplay', 'willpowerCurrent', 'willpowerMax', 'energyCurrent', 'energyMax'];
-            editableFields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.addEventListener('blur', () => { collectFromEditable(); syncToFirebase(); });
-            });
+            // No sincronización automática
         });
     })();
 </script>
